@@ -77,11 +77,19 @@ The script also creates a single remaining figure, that can then be moved around
 
 ## Screenshots from Test Script
 
-
-![Full-screen figure.][full]  
-![Left and right figure.][lr]  
-![2-by-2 figure grid.][2x2]  
-![3-by-2 figure grid.][3x2]  
+##### Full screen
+![Full-screen figure.][full]
+  
+##### Left and right
+![Left and right figure.][lr]
+  
+##### 2-by-2 figures
+![2-by-2 figure grid.][2x2]
+  
+##### 3-by-2 figures
+![3-by-2 figure grid.][3x2]
+  
+##### 3-by-1 figures
 ![3-by-1 figure grid.][3x1]  
 
 [full]: https://github.com/North-Guard/figure_manager/blob/master/screenshots/full.png "Full-screen figure."
