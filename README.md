@@ -4,7 +4,7 @@ The FigureManager can be used to quickly snap a matplotlib-figure to various pos
 for example consistently showing two figures, one above the other, on the left side of the screen. 
 
 
-## Usage
+### Usage
 
 The figure manager is created by:
 
@@ -75,7 +75,7 @@ see all available figure-positions. Answering "Y" to this creates 16 figures in 
 The script also creates a single remaining figure, that can then be moved around using the figure manager.
 
 
-## Screenshots from Test Script
+### Screenshots from Test Script
 
 ##### Full screen
 ![Full-screen figure.][full]
