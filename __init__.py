@@ -1,1 +1,1 @@
-from .figure_manager import FigureManager
+from figure_manager.figure_manager import FigureManager

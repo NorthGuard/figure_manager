@@ -70,7 +70,7 @@ figm.split_3x1.b()
 
 #### Test Script
 
-The main-block of the script can be run to show how everything works. It first asks if the user wants to 
+Run `python -m figure_manager` for a test-script illustrating how everything works. It first asks if the user wants to 
 see all available figure-positions. Answering "Y" to this creates 16 figures in the specified locations.
 The script also creates a single remaining figure, that can then be moved around using the figure manager.
 
