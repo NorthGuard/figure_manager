@@ -43,6 +43,7 @@ class _FigureMeasurer:
         self.__figure_manager, fig = self.create_test_figure()
         if self.__figure_manager is not None:
             self.__figure_manager.full_screen_toggle()
+            plt.pause(0.2)
             full_screen = self.__figure_manager.window.geometry()
             screen_size = tuple(np.array(full_screen.getRect()) + _BAR_ADJUST)
             self.screen_dimensions = QRect(*screen_size)
