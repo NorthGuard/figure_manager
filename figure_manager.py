@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -204,6 +206,16 @@ class _Split3x1:
         return [self.u, self.m, self.b]
 
 
+@lru_cache(maxsize=10)
+def _get_figure_measurer(screen_dimensions=None, auto_initialize=True):
+    figure_measurer = _FigureMeasurer(screen_dimensions=screen_dimensions)
+
+    if auto_initialize:
+        figure_measurer.auto_initialize()
+
+    return figure_measurer
+
+
 class FigureManager:
     """
     Handles the positioning of figures and can be initialized in three different ways:
@@ -221,12 +233,9 @@ class FigureManager:
     wanted position. I no figure is given it will move the current figure.
     get_possible_positions() can be used to find possible position identifiers.
     """
-
     def __init__(self, screen_dimensions=None, auto_initialize=True):
-        self.figure_measurer = _FigureMeasurer(screen_dimensions=screen_dimensions)
-
-        if auto_initialize:
-            self.figure_measurer.auto_initialize()
+        self.figure_measurer = _get_figure_measurer(screen_dimensions=screen_dimensions,
+                                                    auto_initialize=auto_initialize)
 
         # Split-managers
         self.split_2x2 = _Split2x2(figure_measurer=self.figure_measurer)
