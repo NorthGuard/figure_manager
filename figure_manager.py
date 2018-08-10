@@ -1,3 +1,4 @@
+import re
 from functools import lru_cache
 
 import matplotlib.pyplot as plt
@@ -14,7 +15,8 @@ _BAR_ADJUST = np.array([0, 23, 0, -63])
 
 
 class _FigureMeasurer:
-    def __init__(self, screen_dimensions=None, verbose=False):
+    def __init__(self, screen_dimensions=None, verbose=False, delay=0.1):
+        self._delay = delay
         self.__figure_manager = None
         self.screen_dimensions = None
         self.verbose = verbose
@@ -43,11 +45,21 @@ class _FigureMeasurer:
         Automatically initialize FigureManager to current screen.
         """
         self.__figure_manager, fig = self.create_test_figure()
+
         if self.__figure_manager is not None:
+            # Make full screen and get geometry
             self.__figure_manager.full_screen_toggle()
-            plt.pause(0.2)
+            plt.pause(self._delay)
             full_screen = self.__figure_manager.window.geometry()
-            screen_size = tuple(np.array(full_screen.getRect()) + _BAR_ADJUST)
+
+            # In newer versions this is passed as a string
+            if isinstance(full_screen, str):
+                dims = re.search("^(\d+)x(\d+)", full_screen)
+                screen_size = (0, 0, int(dims.group(1)), int(dims.group(2)))
+            else:
+                screen_size = tuple(np.array(full_screen.getRect()) + _BAR_ADJUST)
+
+            # Set measured dimensions
             self.screen_dimensions = QRect(*screen_size)
             self.__figure_manager.full_screen_toggle()
             self.__figure_manager.destroy()
@@ -72,7 +84,7 @@ class _FigureMeasurer:
 
     def get_dimensions(self):
         if not self.screen_dimensions:
-            raise Exception("Something is wrong in FigureManager")
+            raise Exception("Something is wrong in _FigureMeasurer")
         full = self.screen_dimensions  # type: QRect
         x, y, _, _ = full.getCoords()
         height = full.height()
@@ -80,16 +92,15 @@ class _FigureMeasurer:
 
         return x, y, width, height
 
-    @staticmethod
-    def create_test_figure(title="Test Figure", text="Test Figure"):
+    def create_test_figure(self, text="Test Figure"):
         fig = plt.figure()
+        plt.pause(self._delay)
         try:
             figure_manager = plt.get_current_fig_manager()
-            figure_manager.window.setWindowTitle(title)
         except AttributeError:
             figure_manager = None
         plt.text(0.5, 0.5, text, ha="center", va="center", fontsize=40)
-        ax = plt.axes()
+        ax = plt.gca()
         ax.spines['left'].set_color('none')
         ax.spines['right'].set_color('none')
         ax.spines['bottom'].set_color('none')
@@ -99,17 +110,29 @@ class _FigureMeasurer:
         return figure_manager, fig
 
     def set_figure_position(self, position, figure=None):
+        plt.pause(self._delay)
+
+        # For systems using QRect
         try:
             if not figure:
                 figure_manager = plt.get_current_fig_manager()
                 figure_manager.window.setGeometry(position)
             else:
                 figure.canvas.manager.window.setGeometry(position)
+
         except AttributeError:
-            if self.verbose:
-                print("_FigureMeasurer: On non-interactive and leaving figures as is")
-            # Working on non-interactive machine
-            pass
+
+            # For systems using string
+            try:
+                figure_manager = plt.get_current_fig_manager()
+                temp = position.getCoords()
+                figure_manager.window.geometry("{}x{}+{}+{}".format(temp[2], temp[3], temp[0], temp[1]))
+            except AttributeError:
+
+                if self.verbose:
+                    print("_FigureMeasurer: On non-interactive and leaving figures as is")
+                # Working on non-interactive machine
+                pass
 
     def get_qrect(self, n_rows, n_cols, row, col):
         x, y, width, height = self.get_dimensions()
@@ -207,8 +230,8 @@ class _Split3x1:
 
 
 @lru_cache(maxsize=10)
-def _get_figure_measurer(screen_dimensions=None, auto_initialize=True):
-    figure_measurer = _FigureMeasurer(screen_dimensions=screen_dimensions)
+def _get_figure_measurer(screen_dimensions=None, auto_initialize=True, delay=0.1):
+    figure_measurer = _FigureMeasurer(screen_dimensions=screen_dimensions, delay=delay)
 
     if auto_initialize:
         figure_measurer.auto_initialize()
@@ -233,9 +256,10 @@ class FigureManager:
     wanted position. I no figure is given it will move the current figure.
     get_possible_positions() can be used to find possible position identifiers.
     """
-    def __init__(self, screen_dimensions=None, auto_initialize=True):
+    def __init__(self, screen_dimensions=None, auto_initialize=True, delay=0.1):
         self.figure_measurer = _get_figure_measurer(screen_dimensions=screen_dimensions,
-                                                    auto_initialize=auto_initialize)
+                                                    auto_initialize=auto_initialize,
+                                                    delay=delay)
 
         # Split-managers
         self.split_2x2 = _Split2x2(figure_measurer=self.figure_measurer)
@@ -281,3 +305,13 @@ class FigureManager:
     def r(self, figure=None):
         position = self.figure_measurer.get_qrect(1, 2, 0, 1)
         self.figure_measurer.set_figure_position(position, figure)
+
+
+if __name__ == "__main__":
+    figman = FigureManager()
+    print("Screen dimensions: {}".format(figman.figure_measurer.screen_dimensions))
+
+    f = plt.figure()
+    plt.suptitle("Full Figure")
+
+    figman.full()
