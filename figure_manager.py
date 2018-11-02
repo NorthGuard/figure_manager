@@ -14,6 +14,11 @@ except ImportError:
 _BAR_ADJUST = np.array([0, 23, 0, -63])
 
 
+@lru_cache(maxsize=5)
+def get_figure_manager(screen_dimensions=None, auto_initialize=True, delay=0.1):
+    return FigureManager(screen_dimensions=screen_dimensions, auto_initialize=auto_initialize, delay=delay)
+
+
 class _FigureMeasurer:
     def __init__(self, screen_dimensions=None, verbose=False, delay=0.1):
         self._delay = delay
