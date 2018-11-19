@@ -311,6 +311,17 @@ class FigureManager:
         position = self.figure_measurer.get_qrect(1, 2, 0, 1)
         self.figure_measurer.set_figure_position(position, figure)
 
+    ###
+    # Top and bottom
+
+    def t(self, figure=None):
+        position = self.figure_measurer.get_qrect(2, 1, 0, 0)
+        self.figure_measurer.set_figure_position(position, figure)
+
+    def b(self, figure=None):
+        position = self.figure_measurer.get_qrect(2, 1, 0, 1)
+        self.figure_measurer.set_figure_position(position, figure)
+
 
 if __name__ == "__main__":
     figman = FigureManager()
