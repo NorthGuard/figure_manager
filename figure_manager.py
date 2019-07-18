@@ -10,7 +10,6 @@ except ImportError:
     # raise ImportError("Could not import PyQt4.QtCore.QRect or matplotlib.pyplot")
     pass
 
-
 _BAR_ADJUST = np.array([0, 23, 0, -63])
 
 
@@ -26,8 +25,11 @@ class _FigureMeasurer:
         self.screen_dimensions = None
         self.verbose = verbose
 
-        if isinstance(screen_dimensions, QRect):
-            self.set_screen_dimensions(screen_dimensions)
+        if screen_dimensions is not None:
+            if isinstance(screen_dimensions, QRect):
+                self.set_screen_dimensions(screen_dimensions)
+            else:
+                self.set_screen_dimensions(QRect(*screen_dimensions))
 
     def set_screen_dimensions(self, screen_dimensions):
         """
@@ -261,10 +263,16 @@ class FigureManager:
     wanted position. I no figure is given it will move the current figure.
     get_possible_positions() can be used to find possible position identifiers.
     """
+
     def __init__(self, screen_dimensions=None, auto_initialize=True, delay=0.1):
-        self.figure_measurer = _get_figure_measurer(screen_dimensions=screen_dimensions,
-                                                    auto_initialize=auto_initialize,
-                                                    delay=delay)
+        auto_initialize = auto_initialize if screen_dimensions is None else False
+        screen_dimensions = screen_dimensions if (screen_dimensions is None or isinstance(screen_dimensions, QRect)) \
+            else tuple(screen_dimensions)
+
+        self.figure_measurer = _get_figure_measurer(
+            screen_dimensions=screen_dimensions,
+            auto_initialize=auto_initialize,
+            delay=delay)
 
         # Split-managers
         self.split_2x2 = _Split2x2(figure_measurer=self.figure_measurer)
