@@ -236,6 +236,29 @@ class _Split3x1:
         return [self.u, self.m, self.b]
 
 
+class _Split1x3:
+    def __init__(self, figure_measurer):
+        """
+        :param _FigureMeasurer figure_measurer:
+        """
+        self._figure_measurer = figure_measurer
+
+    def l(self, figure=None):
+        position = self._figure_measurer.get_qrect(1, 3, 0, 0)
+        self._figure_measurer.set_figure_position(position, figure)
+
+    def m(self, figure=None):
+        position = self._figure_measurer.get_qrect(1, 3, 0, 1)
+        self._figure_measurer.set_figure_position(position, figure)
+
+    def r(self, figure=None):
+        position = self._figure_measurer.get_qrect(1, 3, 0, 2)
+        self._figure_measurer.set_figure_position(position, figure)
+
+    def moves(self):
+        return [self.l, self.m, self.r]
+
+
 @lru_cache(maxsize=10)
 def _get_figure_measurer(screen_dimensions=None, auto_initialize=True, delay=0.1):
     figure_measurer = _FigureMeasurer(screen_dimensions=screen_dimensions, delay=delay)
@@ -278,6 +301,7 @@ class FigureManager:
         self.split_2x2 = _Split2x2(figure_measurer=self.figure_measurer)
         self.split_3x2 = _Split3x2(figure_measurer=self.figure_measurer)
         self.split_3x1 = _Split3x1(figure_measurer=self.figure_measurer)
+        self.split_1x3 = _Split1x3(figure_measurer=self.figure_measurer)
 
     def _moves(self):
         return [item[0] for item in self._moves_w_fields()]
