@@ -12,6 +12,8 @@ except ImportError:
 
 _BAR_ADJUST = np.array([0, 23, 0, -63])
 
+# TODO: Make the test figure print out all relevant information when closed.
+
 
 @lru_cache(maxsize=5)
 def get_figure_manager(screen_dimensions=None, auto_initialize=True, delay=0.1):
@@ -114,6 +116,7 @@ class _FigureMeasurer:
         ax.spines['top'].set_color('none')
         ax.xaxis.set_ticks([])
         ax.yaxis.set_ticks([])
+        self.__figure_manager = figure_manager
         return figure_manager, fig
 
     def set_figure_position(self, position, figure=None):
