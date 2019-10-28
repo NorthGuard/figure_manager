@@ -15,8 +15,14 @@ _BAR_ADJUST = np.array([0, 23, 0, -63])
 # TODO: Make the test figure print out all relevant information when closed.
 
 
-@lru_cache(maxsize=5)
 def get_figure_manager(screen_dimensions=None, auto_initialize=True, delay=0.1):
+    if not isinstance(screen_dimensions, QRect):
+        screen_dimensions = tuple(screen_dimensions)
+    return _get_figure_manager(screen_dimensions=screen_dimensions, auto_initialize=auto_initialize, delay=delay)
+
+
+@lru_cache(maxsize=5)
+def _get_figure_manager(screen_dimensions=None, auto_initialize=True, delay=0.1):
     return FigureManager(screen_dimensions=screen_dimensions, auto_initialize=auto_initialize, delay=delay)
 
 
