@@ -16,7 +16,7 @@ _BAR_ADJUST = np.array([0, 23, 0, -63])
 
 
 def get_figure_manager(screen_dimensions=None, auto_initialize=True, delay=0.1):
-    if not isinstance(screen_dimensions, QRect):
+    if screen_dimensions is not None and not isinstance(screen_dimensions, QRect):
         screen_dimensions = tuple(screen_dimensions)
     return _get_figure_manager(screen_dimensions=screen_dimensions, auto_initialize=auto_initialize, delay=delay)
 
