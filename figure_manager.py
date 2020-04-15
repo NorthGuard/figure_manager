@@ -97,6 +97,8 @@ class _FigureMeasurer:
         else:
             print("First run 'create_test_figure()'")
 
+        return self.get_screen_dimensions()
+
     def get_dimensions(self):
         if not self.screen_dimensions:
             raise Exception("Something is wrong in _FigureMeasurer")
