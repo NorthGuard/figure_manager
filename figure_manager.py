@@ -26,6 +26,35 @@ def _get_figure_manager(screen_dimensions=None, auto_initialize=True, delay=0.1)
     return FigureManager(screen_dimensions=screen_dimensions, auto_initialize=auto_initialize, delay=delay)
 
 
+class _NoOpFigureMeasurer:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def set_screen_dimensions(self, *args, **kwargs):
+        pass
+
+    def get_screen_dimensions(self, *args, **kwargs):
+        pass
+
+    def auto_initialize(self, *args, **kwargs):
+        pass
+
+    def measure_test_figure(self, *args, **kwargs):
+        pass
+
+    def get_dimensions(self, *args, **kwargs):
+        pass
+
+    def create_test_figure(self, *args, **kwargs):
+        pass
+
+    def set_figure_position(self, *args, **kwargs):
+        pass
+
+    def get_qrect(self, *args, **kwargs):
+        pass
+
+
 class _FigureMeasurer:
     def __init__(self, screen_dimensions=None, verbose=False, delay=0.1):
         self._delay = delay
@@ -303,10 +332,13 @@ class FigureManager:
         screen_dimensions = screen_dimensions if (screen_dimensions is None or isinstance(screen_dimensions, QRect)) \
             else tuple(screen_dimensions)
 
-        self.figure_measurer = _get_figure_measurer(
-            screen_dimensions=screen_dimensions,
-            auto_initialize=auto_initialize,
-            delay=delay)
+        try:
+            self.figure_measurer = _get_figure_measurer(
+                screen_dimensions=screen_dimensions,
+                auto_initialize=auto_initialize,
+                delay=delay)
+        except AttributeError:  # Running on machine without graphical interface - use no-op system
+            self.figure_measurer = _NoOpFigureMeasurer()
 
         # Split-managers
         self.split_2x2 = _Split2x2(figure_measurer=self.figure_measurer)
