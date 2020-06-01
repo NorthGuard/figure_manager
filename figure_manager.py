@@ -140,7 +140,10 @@ class _FigureMeasurer:
 
     def create_test_figure(self, text="Test Figure"):
         fig = plt.figure()
-        plt.pause(self._delay)
+        try:
+            plt.pause(self._delay)
+        except TypeError:
+            pass
         try:
             figure_manager = plt.get_current_fig_manager()
         except AttributeError:
