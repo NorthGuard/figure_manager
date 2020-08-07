@@ -1,33 +1,34 @@
 # figure_manager
 
-The FigureManager can be used to quickly snap a matplotlib-figure to various positions on the screen, 
-for example consistently showing two figures, one above the other, on the left side of the screen. 
+`figure_manager` can snap matplotlib-figures to various positions on the screen.  
+For example, more one figure to upper-left corner of the screen or make a figure full-screen. 
 
 
 ### Usage
 
-The figure manager is created by:
+The figure manager is used as follows:
 
 ```python
-from figure_manager import FigureManager
 import matplotlib.pyplot as plt
 import numpy as np
+from figure_manager import get_figure_manager
 
-# Create figure-manager
-figm = FigureManager()
+# Get figure-manager
+figm = get_figure_manager()  # Here the figure manager measures the screen
 
-# Make a figure and put it in the top-left corner
+# Make a figure
 plt.figure()
 xs = np.linspace(0, 6, 200)
 ys = np.sin(xs)
 plt.plot(xs, ys)
 plt.show()
+
+# Split screen into a 2-by-2 grid and move figure to upper-left corner
 figm.split_2x2.ul()
 ```
 
-When the figure-manager is initialized it creates a *test-figure*. This test-figure is then maximized, 
-has its size measured and then closed (takes a fraction of a second). This is the way the figure-manager knows the 
-size of the given monitor. 
+When the figure-manager is initialized it creates a *test-figure*, which is then maximized, used to 
+measure the size of the screen and closed (takes a fraction of a second). 
 
 #### Available commands
 
@@ -67,15 +68,18 @@ figm.split_3x1.m()
 figm.split_3x1.b()
 ```
 
+Custom grid and position
+```
+figm.position(n_rows=8, n_cols=3, row_nr=1, col_nr=2)
+```
+
 
 #### Test Script
 
-Run `python -m figure_manager` for a test-script illustrating how everything works. It first asks if the user wants to 
-see all available figure-positions. Answering "Y" to this creates 16 figures in the specified locations.
-The script also creates a single remaining figure, that can then be moved around using the figure manager.
+The `example.py` further exemplifies the use.
 
 
-### Screenshots from Test Script
+### Screenshots of grid
 
 ##### Full screen
 ![Full-screen figure.][full]
