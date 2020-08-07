@@ -1,8 +1,10 @@
 from setuptools import setup
 from figure_manager import __version__
 
-with open("pypi_description.md", "r") as fh:
-    long_description = fh.read()
+long_description = """
+`figure_manager` can snap matplotlib-figures to various positions on the screen.  
+For example, more one figure to upper-left corner of the screen or make a figure full-screen. 
+"""
 
 setup(
     # Main

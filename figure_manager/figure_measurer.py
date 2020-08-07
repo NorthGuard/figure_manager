@@ -151,6 +151,8 @@ class _FigureMeasurer:
                 figure_manager = plt.get_current_fig_manager()
                 figure_manager.window.setGeometry(position)
             else:
+                if isinstance(figure, int):
+                    figure = plt.figure(figure)
                 figure.canvas.manager.window.setGeometry(position)
 
         except AttributeError:
