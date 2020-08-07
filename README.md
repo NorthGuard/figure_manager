@@ -3,8 +3,7 @@
 `figure_manager` can snap matplotlib-figures to various positions on the screen.  
 For example, more one figure to upper-left corner of the screen or make a figure full-screen. 
 
-
-### Usage
+### Example
 
 The figure manager is used as follows:
 
@@ -30,7 +29,12 @@ figm.split_2x2.ul()
 When the figure-manager is initialized it creates a *test-figure*, which is then maximized, used to 
 measure the size of the screen and closed (takes a fraction of a second). 
 
-#### Available commands
+### Installation
+Install by `pip install figure-manager`
+
+
+
+## More Usage
 
 Full-screen figure:
 ```
