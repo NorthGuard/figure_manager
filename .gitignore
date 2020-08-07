@@ -3,3 +3,7 @@
 __pycache__/
 
 .idea/
+
+dist/
+
+figure_manager.egg-info/

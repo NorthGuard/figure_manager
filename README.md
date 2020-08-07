@@ -100,8 +100,8 @@ The `example.py` further exemplifies the use.
 ##### 3-by-1 figures
 ![3-by-1 figure grid.][3x1]  
 
-[full]: https://github.com/North-Guard/figure_manager/blob/master/screenshots/full.png "Full-screen figure."
-[lr]: https://github.com/North-Guard/figure_manager/blob/master/screenshots/lr.png "Left and right figure."
-[2x2]: https://github.com/North-Guard/figure_manager/blob/master/screenshots/2x2.png "2-by-2 figure grid."
-[3x2]: https://github.com/North-Guard/figure_manager/blob/master/screenshots/3x2.png "3-by-2 figure grid."
-[3x1]: https://github.com/North-Guard/figure_manager/blob/master/screenshots/3x1.png "3-by-1 figure grid."
+[full]: https://github.com/NorthGuard/figure_manager/blob/master/figure_manager/screenshots/full.png "Full-screen figure."
+[lr]: https://github.com/NorthGuard/figure_manager/blob/master/figure_manager/screenshots/lr.png "Left and right figure."
+[2x2]: https://github.com/North-Guard/figure_manager/blob/master/figure_manager/screenshots/2x2.png "2-by-2 figure grid."
+[3x2]: https://github.com/North-Guard/figure_manager/blob/master/figure_manager/screenshots/3x2.png "3-by-2 figure grid."
+[3x1]: https://github.com/North-Guard/figure_manager/blob/master/figure_manager/screenshots/3x1.png "3-by-1 figure grid."
