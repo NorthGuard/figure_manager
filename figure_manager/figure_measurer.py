@@ -41,7 +41,7 @@ class _NoOpFigureMeasurer:
 class _FigureMeasurer:
     def __init__(self, screen_dimensions=None, verbose=False, delay=0.1):
         self._delay = delay
-        self.__figure_manager = None
+        self._figure_manager = None
         self.screen_dimensions = None
         self.verbose = verbose
 
@@ -58,7 +58,7 @@ class _FigureMeasurer:
         """
         if isinstance(screen_dimensions, QRect):
             self.screen_dimensions = screen_dimensions
-            self.__figure_manager = None
+            self._figure_manager = None
         else:
             raise TypeError("FigureManager passed incorrect type. " +
                             "screen_dimensions variable should be type QRect, but was{0}".format(
@@ -71,13 +71,13 @@ class _FigureMeasurer:
         """
         Automatically initialize FigureManager to current screen.
         """
-        self.__figure_manager, fig = self.create_test_figure()
+        self._figure_manager, fig = self.make_test_figure(verbose=False)
 
-        if self.__figure_manager is not None:
+        if self._figure_manager is not None:
             # Make full screen and get geometry
-            self.__figure_manager.full_screen_toggle()
+            self._figure_manager.full_screen_toggle()
             plt.pause(self._delay)
-            full_screen = self.__figure_manager.window.geometry()
+            full_screen = self._figure_manager.window.geometry()
 
             # In newer versions this is passed as a string
             if isinstance(full_screen, str):
@@ -88,28 +88,39 @@ class _FigureMeasurer:
 
             # Set measured dimensions
             self.screen_dimensions = QRect(*screen_size)
-            self.__figure_manager.full_screen_toggle()
-            self.__figure_manager.destroy()
+
+            # Destroy
+            self._figure_manager.full_screen_toggle()
+            plt.close(self._figure_manager.canvas.figure)
+            # self._figure_manager.destroy()
 
         else:
             if self.verbose:
                 print("_FigureMeasurer: On non-interactive and thus not initializing")
         plt.close(fig)
 
-    def measure_test_figure(self):
+    def measure_test_figure(self, verbose=True):
         """
         Measure the current test figure (use after create_test_figure()).
         The FigureManager is initialized after measure_test_figure() has run.
         """
-        if self.__figure_manager:
-            self.__figure_manager.window.showMaximized()
-            self.screen_dimensions = self.__figure_manager.window.geometry()
-            self.__figure_manager.destroy()
-            self.__figure_manager = None
+        if self._figure_manager:
+            # self._figure_manager.window.showMaximized()
+            self.screen_dimensions = self._figure_manager.window.geometry()
+            # self._figure_manager.destroy()
+            plt.close(self._figure_manager.canvas.figure)
+            self._figure_manager = None
         else:
             print("First run 'create_test_figure()'")
 
-        return self.get_screen_dimensions()
+        # Get dimensions
+        dimensions = self.get_screen_dimensions()
+
+        if verbose:
+            print(f"\nCreate figure manager with: "
+                  f"get_figure_manager(screen_dimensions={list(dimensions.getRect())})\n")
+
+        return dimensions
 
     def get_dimensions(self):
         if not self.screen_dimensions:
@@ -121,16 +132,17 @@ class _FigureMeasurer:
 
         return x, y, width, height
 
-    def create_test_figure(self, text="Test Figure"):
-        fig = plt.figure()
+    def make_test_figure(self, text="Test Figure", verbose=True):
         try:
             plt.pause(self._delay)
         except TypeError:
             pass
         try:
             figure_manager = plt.get_current_fig_manager()
+            fig = figure_manager.canvas.figure
         except AttributeError:
             figure_manager = None
+            fig = plt.figure()
         plt.text(0.5, 0.5, text, ha="center", va="center", fontsize=40)
         ax = plt.gca()
         ax.spines['left'].set_color('none')
@@ -139,7 +151,9 @@ class _FigureMeasurer:
         ax.spines['top'].set_color('none')
         ax.xaxis.set_ticks([])
         ax.yaxis.set_ticks([])
-        self.__figure_manager = figure_manager
+        self._figure_manager = figure_manager
+        if verbose:
+            print("\nTest figure created - move to measurement, then use measure_test_figure().\n")
         return figure_manager, fig
 
     def set_figure_position(self, position, figure=None):

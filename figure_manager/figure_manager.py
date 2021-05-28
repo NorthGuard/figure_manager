@@ -89,7 +89,7 @@ class FigureManager(_Splitter):
     def _test_all_positions(self):
         for _move, _field in self._moves_w_fields():
             name = "{}.{}".format(_field, _move.__name__)
-            _, fig = self.figure_measurer.create_test_figure(text=name)
+            _, fig = self.figure_measurer.make_test_figure(text=name)
             # noinspection PyArgumentList
             _move(figure=fig)
 
