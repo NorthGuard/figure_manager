@@ -117,6 +117,15 @@ class FigureManager(_Splitter):
     def b(self, figure=None):
         self.position(n_rows=2, n_cols=1, row_nr=1, col_nr=0, figure=figure)
 
+    ###
+    # Shortcuts to figure measurer
+
+    def make_test_figure(self, text="Test Figure", verbose=True):
+        return self.figure_measurer.make_test_figure(text=text, verbose=verbose)
+
+    def measure_test_figure(self, verbose=True):
+        return self.figure_measurer.measure_test_figure(verbose=verbose)
+
 
 if __name__ == "__main__":
     figman = FigureManager()

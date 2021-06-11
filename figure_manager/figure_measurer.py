@@ -1,4 +1,5 @@
 import re
+import warnings
 from functools import lru_cache
 
 import numpy as np
@@ -117,8 +118,8 @@ class _FigureMeasurer:
         dimensions = self.get_screen_dimensions()
 
         if verbose:
-            print(f"\nCreate figure manager with: "
-                  f"get_figure_manager(screen_dimensions={list(dimensions.getRect())})\n")
+            print(f"\nCreate figure manager with: \n"
+                  f"\tget_figure_manager(screen_dimensions={list(dimensions.getRect())})\n")
 
         return dimensions
 
@@ -137,12 +138,13 @@ class _FigureMeasurer:
             plt.pause(self._delay)
         except TypeError:
             pass
-        try:
-            figure_manager = plt.get_current_fig_manager()
-            fig = figure_manager.canvas.figure
-        except AttributeError:
-            figure_manager = None
-            fig = plt.figure()
+
+        # Make figure and get figure manager
+        fig = plt.figure()
+        plt.pause(self._delay)
+        figure_manager = plt.get_current_fig_manager()
+
+        # Mark as test-figure
         plt.text(0.5, 0.5, text, ha="center", va="center", fontsize=40)
         ax = plt.gca()
         ax.spines['left'].set_color('none')
@@ -151,9 +153,12 @@ class _FigureMeasurer:
         ax.spines['top'].set_color('none')
         ax.xaxis.set_ticks([])
         ax.yaxis.set_ticks([])
+
+        # Set and print
         self._figure_manager = figure_manager
         if verbose:
             print("\nTest figure created - move to measurement, then use measure_test_figure().\n")
+
         return figure_manager, fig
 
     def _set_noninteractive_size(self, position, figure=None):
