@@ -156,8 +156,31 @@ class _FigureMeasurer:
             print("\nTest figure created - move to measurement, then use measure_test_figure().\n")
         return figure_manager, fig
 
+    def _set_noninteractive_size(self, position, figure=None):
+        # Get figure
+        if figure is None:
+            figure = plt.gcf()  # type: plt.Figure
+        if isinstance(figure, int):
+            figure = plt.figure(figure)  # type: plt.Figure
+
+        # Get size
+        width = position.width()
+        height = position.height()
+
+        # Get dpi
+        dpi = float(figure.get_dpi())
+
+        # Set size
+        figure.set_size_inches(w=width / dpi, h=height / dpi)
+
     def set_figure_position(self, position, figure=None):
-        plt.pause(self._delay)
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("error")
+                plt.pause(self._delay)
+
+        except UserWarning:
+            self._set_noninteractive_size(position=position, figure=figure)
 
         # For systems using QRect
         try:
@@ -177,11 +200,7 @@ class _FigureMeasurer:
                 temp = position.getCoords()
                 figure_manager.window.geometry("{}x{}+{}+{}".format(temp[2], temp[3], temp[0], temp[1]))
             except AttributeError:
-
-                if self.verbose:
-                    print("_FigureMeasurer: On non-interactive and leaving figures as is")
-                # Working on non-interactive machine
-                pass
+                self._set_noninteractive_size(position=position, figure=figure)
 
     def get_qrect(self, n_rows, n_cols, row, col):
         x, y, width, height = self.get_dimensions()
