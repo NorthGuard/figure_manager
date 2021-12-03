@@ -89,7 +89,7 @@ class FigureManager(_Splitter):
     def _test_all_positions(self):
         for _move, _field in self._moves_w_fields():
             name = "{}.{}".format(_field, _move.__name__)
-            _, fig = self.figure_measurer.make_test_figure(text=name)
+            _, fig = self.figure_measurer.make_test_figure(text=name, return_objects=True)
             # noinspection PyArgumentList
             _move(figure=fig)
 
@@ -120,11 +120,12 @@ class FigureManager(_Splitter):
     ###
     # Shortcuts to figure measurer
 
-    def make_test_figure(self, text="Test Figure", verbose=True):
-        return self.figure_measurer.make_test_figure(text=text, verbose=verbose)
+    def make_test_figure(self, text="Test Figure", return_objects=False):
+        return self.figure_measurer.make_test_figure(text=text, return_objects=return_objects)
 
-    def measure_test_figure(self, verbose=True):
-        return self.figure_measurer.measure_test_figure(verbose=verbose)
+    def measure_test_figure(self, verbose=True, close=True, return_dimensions=False):
+        return self.figure_measurer.measure_test_figure(
+            verbose=verbose, close=close, return_dimensions=return_dimensions)
 
 
 if __name__ == "__main__":

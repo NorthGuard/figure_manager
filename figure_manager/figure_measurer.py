@@ -2,10 +2,10 @@ import re
 import warnings
 from functools import lru_cache
 
+from inspect import cleandoc
 import numpy as np
 from PyQt5.QtCore import QRect
 from matplotlib import pyplot as plt
-
 
 _BAR_ADJUST = np.array([0, 23, 0, -63])  # TODO: This is not very dynamic :/
 
@@ -72,7 +72,7 @@ class _FigureMeasurer:
         """
         Automatically initialize FigureManager to current screen.
         """
-        self._figure_manager, fig = self.make_test_figure(verbose=False)
+        self._figure_manager, fig = self.make_test_figure(return_objects=True)
 
         if self._figure_manager is not None:
             # Make full screen and get geometry
@@ -100,7 +100,7 @@ class _FigureMeasurer:
                 print("_FigureMeasurer: On non-interactive and thus not initializing")
         plt.close(fig)
 
-    def measure_test_figure(self, verbose=True):
+    def measure_test_figure(self, verbose=True, close=True, return_dimensions=False):
         """
         Measure the current test figure (use after create_test_figure()).
         The FigureManager is initialized after measure_test_figure() has run.
@@ -109,8 +109,10 @@ class _FigureMeasurer:
             # self._figure_manager.window.showMaximized()
             self.screen_dimensions = self._figure_manager.window.geometry()
             # self._figure_manager.destroy()
-            plt.close(self._figure_manager.canvas.figure)
-            self._figure_manager = None
+
+            if close:
+                plt.close(self._figure_manager.canvas.figure)
+                self._figure_manager = None
         else:
             print("First run 'create_test_figure()'")
 
@@ -118,10 +120,20 @@ class _FigureMeasurer:
         dimensions = self.get_screen_dimensions()
 
         if verbose:
-            print(f"\nCreate figure manager with: \n"
-                  f"\tget_figure_manager(screen_dimensions={list(dimensions.getRect())})\n")
+            temp = list(dimensions.getRect())
+            print("\n" + cleandoc(f"""
+            Measurement: 
+                X-coordinate (from left)  : {temp[0]}
+                Y-coordinate (from top)   : {temp[1]}
+                Width                     : {temp[2]}
+                Height                    : {temp[3]}
 
-        return dimensions
+            Create figure manager with:
+                get_figure_manager(screen_dimensions={temp})
+            """) + "\n")
+
+        if return_dimensions:
+            return dimensions
 
     def get_dimensions(self):
         if not self.screen_dimensions:
@@ -133,7 +145,7 @@ class _FigureMeasurer:
 
         return x, y, width, height
 
-    def make_test_figure(self, text="Test Figure", verbose=True):
+    def make_test_figure(self, text="Test Figure", return_objects=False):
         try:
             plt.pause(self._delay)
         except TypeError:
@@ -146,6 +158,9 @@ class _FigureMeasurer:
 
         # Mark as test-figure
         plt.text(0.5, 0.5, text, ha="center", va="center", fontsize=40)
+        description = "Move to location and adjust size for measurement. \n" \
+                      "Then use measure_test_figure() to make measurement."
+        plt.text(0.5, 0.25, description, ha="center", va="center", fontsize=12)
         ax = plt.gca()
         ax.spines['left'].set_color('none')
         ax.spines['right'].set_color('none')
@@ -156,10 +171,9 @@ class _FigureMeasurer:
 
         # Set and print
         self._figure_manager = figure_manager
-        if verbose:
-            print("\nTest figure created - move to measurement, then use measure_test_figure().\n")
 
-        return figure_manager, fig
+        if return_objects:
+            return figure_manager, fig
 
     def _set_noninteractive_size(self, position, figure=None):
         # Get figure
